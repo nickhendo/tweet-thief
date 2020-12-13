@@ -12,7 +12,7 @@ def api():
     if not handle:
         return {}
     timeline = get_timeline(handle)
-    tweets = update_tweets([], timeline)
+    tweets, _ = update_tweets([], timeline)
     return {
         "tweets": [{
             'body': tweet['body'],

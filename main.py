@@ -31,6 +31,7 @@ def get_timeline(twitter_handle):
 
 
 def update_tweets(current_list, timeline):
+    new_list = []
     tweet_timezone = pytz.timezone('UTC')
     local_timezone = get_localzone()
     for tweet in timeline:
@@ -40,12 +41,18 @@ def update_tweets(current_list, timeline):
                                   '%d/%m/%Y, %H:%M:%S')).astimezone(local_timezone)
         tweet_body = tweet.find('div', 'tweet-content').text
         if all(tweet_time > tweet['time'] for tweet in current_list):
-            current_list.append({
+            tweet_dict = {
                 'body': tweet_body,
                 'time': tweet_time,
-                'printed': False
-            })
-    return current_list
+            }
+            current_list.append(tweet_dict)
+            new_list.append(tweet_dict)
+    return current_list, new_list
+
+
+def print_tweet(tweet):
+    print(tweet['time'].ctime())
+    print(f"{tweet['body']}\n")
 
 
 def main():
@@ -55,22 +62,19 @@ def main():
     twitter_handle = args.handle
 
     timeline = get_timeline(twitter_handle)
-    tweet_list = update_tweets([], timeline)
+    tweet_list, _ = update_tweets([], timeline)
 
     # Only interested in the 5 most recent tweets
     del tweet_list[:-5]
 
     for tweet in tweet_list:
-        print(tweet['time'].ctime())
-        print(f"{tweet['body']}\n")
-        tweet['printed'] = True
+        print_tweet(tweet)
 
     while True:
         timeline = get_timeline(twitter_handle)
-        tweet_list = update_tweets(tweet_list, timeline)
-        for tweet in [t for t in tweet_list if not t['printed']]:
-            print(tweet['time'].ctime(), tweet['body'])
-            tweet['printed'] = True
+        tweet_list, new_tweets = update_tweets(tweet_list, timeline)
+        for tweet in new_tweets:
+            print_tweet(tweet)
         time.sleep(REFRESH_TIME)
 
 
