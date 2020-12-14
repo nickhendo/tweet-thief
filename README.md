@@ -24,12 +24,12 @@ can be queried with:
 ```
 curl 'localhost:<port_number>/tweets?handle=<twitter_handle>'
 ```
-Which will return a JSON structure containing the tweets. 
+Which will return a JSON structure containing the tweets. Alternatively, the Flask app can be 
+modified to serve on localhost directly, and then the above query can work the same.
 
 ## Further Development
 Further development of this repo would combine the two usages above, leveraging threading, to run 
 the incremental tweet checks every 10 mins, with the collected tweets.
  
-Additionally, the Twitter 
-handle would be passed into the combined solution, rather than as a URL query, with each tweet 
-being sent to stdout as required.
+Additionally, the Twitter handle would be passed into the combined solution, rather than as a URL 
+query, with each tweet being sent to stdout as required.
