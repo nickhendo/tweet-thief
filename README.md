@@ -23,6 +23,7 @@ Currently, the API retrieves all the recent tweets on the initial load of the `n
 can be queried with:
 ```
 curl 'localhost:<port_number>/tweets?handle=<twitter_handle>'
+port_number = 5000 (default)
 ```
 Which will return a JSON structure containing the tweets. Alternatively, the Flask app can be 
 modified to serve on localhost directly, and then the above query can work the same.
