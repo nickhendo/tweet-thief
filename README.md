@@ -34,3 +34,9 @@ the incremental tweet checks every 10 mins, with the collected tweets.
  
 Additionally, the Twitter handle would be passed into the combined solution, rather than as a URL 
 query, with each tweet being sent to stdout as required.
+
+## Comments
+
+Unit tests would also be a nice addition given more time. 
+
+Not clear whether other output was appropriate, so all has been suppressed 

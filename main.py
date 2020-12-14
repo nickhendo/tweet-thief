@@ -27,8 +27,8 @@ def get_timeline(twitter_handle):
     return timeline
 
 
-def update_tweets(current_list, timeline):
-    new_list = []
+def get_raw_tweets(current_list, timeline):
+    new_tweets = []
     tweet_timezone = pytz.timezone('UTC')
     local_timezone = get_localzone()
     for tweet in timeline:
@@ -42,38 +42,33 @@ def update_tweets(current_list, timeline):
                 'body': tweet_body,
                 'time': tweet_time,
             }
-            current_list.append(tweet_dict)
-            new_list.append(tweet_dict)
-    return current_list, new_list
+            new_tweets.append(tweet_dict)
+    return new_tweets
 
 
-def print_tweet(tweet):
-    print(tweet['time'].ctime())
-    print(f"{tweet['body']}\n")
+def print_tweets(tweets):
+    for tweet in tweets:
+        print(f"{tweet['time'].ctime()}: {tweet['body']}")
 
 
-def main(refresh_time, handle):
-    twitter_handle = handle
-
-    timeline = get_timeline(twitter_handle)
-    tweet_list, _ = update_tweets([], timeline)
-
-    # Only interested in the 5 most recent tweets
-    del tweet_list[:-5]
-
-    for tweet in tweet_list:
-        print_tweet(tweet)
-
-    while True:
-        timeline = get_timeline(twitter_handle)
-        tweet_list, new_tweets = update_tweets(tweet_list, timeline)
-        for tweet in new_tweets:
-            print_tweet(tweet)
-        time.sleep(refresh_time)
+def get_new_tweets(current_tweets, handle, limit=None):
+    timeline = get_timeline(handle)
+    tweet_list = get_raw_tweets(current_tweets, timeline)
+    if limit:
+        # Only interested in the 5 most recent tweets
+        del tweet_list[:-limit]
+    return tweet_list
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('handle', help='Twitter handle to monitor')
     args = parser.parse_args()
-    main(600, args.handle)
+    # Only want first 5 initially
+    tweet_list = get_new_tweets([], args.handle, limit=5)
+    print_tweets(tweet_list)
+    while True:
+        new_tweets = get_new_tweets(tweet_list, args.handle)
+        print_tweets(new_tweets)
+        tweet_list.extend(new_tweets)
+        time.sleep(600)
