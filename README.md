@@ -1,5 +1,6 @@
 # Tweet Thief
-For all your Twitter monitoring needs
+For all your Twitter monitoring needs. This repo leverages nitter.net, a lightweight JS-free 
+alternative to Twitter, which is easily scrapable.
 
 ## Installation
 ```
@@ -9,6 +10,26 @@ pip install -r requirements.txt
 ```
 
 ## Usage
+There are two ways to main usages to this repo. The first:
 ```
 $ python main.py <twitter_handle>
 ```
+is a simple retrieval of the 5 most recent tweets for the given `twitter_handle` and then 
+periodically checks for new ones every 10 minutes.
+
+The second is a provided [Dockerfile](Dockerfile) which, when built, exposes a basic Flask API. At
+this point, the Flask API does not run alongside the previous usage, with 10 min periodic checks. 
+Currently, the API retrieves all the recent tweets on the initial load of the `nitter` page. Tweets 
+can be queried with:
+```
+curl 'localhost:<port_number>/tweets?handle=<twitter_handle>'
+```
+Which will return a JSON structure containing the tweets. 
+
+## Further Development
+Further development of this repo would combine the two usages above, leveraging threading, to run 
+the incremental tweet checks every 10 mins, with the collected tweets.
+ 
+Additionally, the Twitter 
+handle would be passed into the combined solution, rather than as a URL query, with each tweet 
+being sent to stdout as required.

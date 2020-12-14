@@ -9,9 +9,6 @@ from datetime import datetime
 from tzlocal import get_localzone
 
 
-REFRESH_TIME = 5
-
-
 def get_timeline(twitter_handle):
     # Nitter is used as Twitter has JavaScript detection, which complicates web scraping. The API
     # is no longer accessible without auth. A legacy supported non-JS requiring mobile version of
@@ -55,11 +52,8 @@ def print_tweet(tweet):
     print(f"{tweet['body']}\n")
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('handle', help='Twitter handle to monitor')
-    args = parser.parse_args()
-    twitter_handle = args.handle
+def main(refresh_time, handle):
+    twitter_handle = handle
 
     timeline = get_timeline(twitter_handle)
     tweet_list, _ = update_tweets([], timeline)
@@ -75,8 +69,11 @@ def main():
         tweet_list, new_tweets = update_tweets(tweet_list, timeline)
         for tweet in new_tweets:
             print_tweet(tweet)
-        time.sleep(REFRESH_TIME)
+        time.sleep(refresh_time)
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('handle', help='Twitter handle to monitor')
+    args = parser.parse_args()
+    main(600, args.handle)
